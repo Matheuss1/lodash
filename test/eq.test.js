@@ -2,30 +2,50 @@ import assert from 'assert';
 import eq from '../eq.js';
 
 describe('eq', function() {
-  it('should return true for without arguments', function() {
+  it('should return true without arguments', function() {
     assert.strictEqual(eq(), true);
   });
 
-  it('should compare the same value with only one argument', function() {
+  it('should treat missing argument as undefined', function() {
     assert.strictEqual(eq(undefined), true);
   });
 
-  it('should return false to different types', function() {
-    assert.strictEqual(eq(0, false), false);
-    assert.strictEqual(eq(null, undefined), false);
-    assert.strictEqual(eq(1, Object(1)), false);
-    assert.strictEqual(eq(1, '1'), false);
+  describe('when types are different', function() {
+    it('should return false to number and boolean', function() {
+      assert.strictEqual(eq(0, false), false);
+    });
+
+    it('should return false to null and undefined', function() {
+      assert.strictEqual(eq(null, undefined), false);
+    });
+
+    it('should return false to number and object', function() {
+      assert.strictEqual(eq(1, Object(1)), false);
+    });
+
+    it('should return false to number and string', function() {
+      assert.strictEqual(eq(1, '1'), false);
+    });
+
+    it('should return false to string and symbol', function() {
+      assert.strictEqual(eq(Symbol('abc'), 'abc'), false);
+    });
   });
 
-  it('should return true for both undefined', function() {
-    assert.strictEqual(eq(undefined, undefined), true);
+
+  describe('when type is undefined', function() {
+    it('should return true for both undefined', function() {
+      assert.strictEqual(eq(undefined, undefined), true);
+    });
   });
 
-  it('should return true for both null', function() {
-    assert.strictEqual(eq(null, null), true);
-  });
+  describe('when type is null', function() {
+    it('should return true for both null', function() {
+      assert.strictEqual(eq(null, null), true);
+    });
+  })
 
-  describe('number type', function() {
+  describe('when type is number', function() {
     it('should return true for both +0', function() {
       assert.strictEqual(eq(+0, +0), true);
     });
@@ -54,16 +74,16 @@ describe('eq', function() {
       assert.strictEqual(eq(-0, NaN), false);
     });
 
-    it('should return false different conventional numbers', function() {
+    it('should return false different ordinary numbers', function() {
       assert.strictEqual(eq(2, -2), false);
     });
 
-    it('should return true for the same conventional number', function() {
+    it('should return true for the same ordinary number', function() {
       assert.strictEqual(eq(1.0, 1.0), true);
     });
   });
 
-  describe('string type', function() {
+  describe('when type is string', function() {
     it('should return true for strings equal element-wise', function() {
       assert.strictEqual(eq("abcd", "abcd"), true);
     });
@@ -73,7 +93,7 @@ describe('eq', function() {
     });
   });
 
-  describe('boolean type', function() {
+  describe('when type is boolean', function() {
     it('should return true for both true', function() {
       assert.strictEqual(eq(true, true), true);
     });
@@ -91,18 +111,18 @@ describe('eq', function() {
     });
   });
 
-  describe('symbol type', function() {
-    it('should return true for the same Symbol value', function() {
+  describe('when type is symbol', function() {
+    it('should return true for the same Symbol instance', function() {
       const symbol = Symbol("sym");
       assert.strictEqual(eq(symbol, symbol), true);
     });
 
-    it('should return false for different Symbol value', function() {
+    it('should return false for different Symbol instance', function() {
       assert.strictEqual(eq(Symbol("sym"), Symbol("sym")), false);
     });
   });
 
-  describe('object type', function() {
+  describe('when type is object', function() {
     it('should return true for the same instance', function() {
       const object = { 'a': 1 };
       assert.strictEqual(eq(object, object), true);
