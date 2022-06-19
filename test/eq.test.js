@@ -2,14 +2,6 @@ import assert from 'assert'
 import eq from '../eq.js'
 
 describe('eq', () => {
-  it('should return true without arguments', () => {
-    assert.strictEqual(eq(), true)
-  })
-
-  it('should treat missing argument as undefined', () => {
-    assert.strictEqual(eq(undefined), true)
-  })
-
   describe('when types are different', () => {
     it('should return false to number and boolean', () => {
       assert.strictEqual(eq(0, false), false)
