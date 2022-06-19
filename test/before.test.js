@@ -34,7 +34,7 @@ describe('before', () => {
       })
 
       describe('when n > 0', () => {
-        it('should create a function that invokes `func` before being called n times', () => {
+        it('should create a function that invokes `func` while being called at most n - 1 times', () => {
           assert.strictEqual(callMethod(5, 4), 4)
         })
 
