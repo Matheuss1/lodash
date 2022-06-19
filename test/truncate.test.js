@@ -5,8 +5,26 @@ import truncate from '../truncate.js'
 describe('truncate', () => {
   const string = 'hi-diddly-ho there, neighborino'
 
-  describe('flux control structural tests', () => {
-    it('path::2::should accept a `sepator` str option', () => {
+  describe('Control-Flow Graph structural tests', () => {
+    it('path::1::should return path + omission if no separator was defined and `length` < `string` length', () => {
+      const result = truncate('32-chars-string-----------------')
+
+      assert.strictEqual(result, '32-chars-string------------...')
+    })
+
+    it('path::2::should truncate strings with unicode', () => {
+      const result = truncate('32-chars-string\u00E9-----------   -')
+
+      assert.strictEqual(result, '32-chars-string\u00E9-----------...')
+    })
+
+    it('path::3::should not truncate if `string` is <= `length` default value (30)', () => {
+      const result = truncate('small string')
+
+      assert.strictEqual(result, 'small string')
+    })
+
+    it('path::8::should use `separator` str option to slice string', () => {
       const result = truncate('32-chars-string------------   -', {
         separator: ' '
       })
@@ -14,7 +32,7 @@ describe('truncate', () => {
       assert.strictEqual(result, '32-chars-string------------...')
     })
 
-    it('path::2::should accept a `sepator` regex option', () => {
+    it('path::11::should use a `separator` regex to slice string', () => {
       const result = truncate('32-chars-string------------,  -', {
         separator: /,? +/
       })
@@ -22,28 +40,10 @@ describe('truncate', () => {
       assert.strictEqual(result, '32-chars-string------------...')
     })
 
-    it('path::2::should accept a `sepator` global match regex option', () => {
+    it('path::12::should use a `separator` global match regex to slice string', () => {
       const result = truncate('32-chars-string------------,  -', {
         separator: /,? +/g
       })
-
-      assert.strictEqual(result, '32-chars-string------------...')
-    })
-
-    it('path3::should truncate strings with unicode', () => {
-      const result = truncate('32-chars-string\u00E9-----------   -')
-
-      assert.strictEqual(result, '32-chars-string\u00E9-----------...')
-    })
-
-    it('path4::should not truncate if `string` is <= `length` default value (30)', () => {
-      const result = truncate('small string')
-
-      assert.strictEqual(result, 'small string')
-    })
-
-    it('path6::should return path + omission if no separator was defined and `length` < `string` length', () => {
-      const result = truncate('32-chars-string-----------------')
 
       assert.strictEqual(result, '32-chars-string------------...')
     })
