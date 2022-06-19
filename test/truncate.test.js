@@ -6,16 +6,16 @@ describe('truncate', () => {
   const string = 'hi-diddly-ho there, neighborino'
 
   describe('Control-Flow Graph structural tests', () => {
-    it('path::1::should return path + omission if no separator was defined and `length` < `string` length', () => {
+    it('path::1::should return long string truncated with omission', () => {
       const result = truncate('32-chars-string-----------------')
 
       assert.strictEqual(result, '32-chars-string------------...')
     })
 
     it('path::2::should truncate strings with unicode', () => {
-      const result = truncate('32-chars-string\u00E9-----------   -')
+      const result = truncate('32-chars-string\ud800----------------')
 
-      assert.strictEqual(result, '32-chars-string\u00E9-----------...')
+      assert.strictEqual(result, '32-chars-string\ud800-----------...')
     })
 
     it('path::3::should not truncate if `string` is <= `length` default value (30)', () => {
@@ -24,28 +24,76 @@ describe('truncate', () => {
       assert.strictEqual(result, 'small string')
     })
 
-    it('path::8::should use `separator` str option to slice string', () => {
-      const result = truncate('32-chars-string------------   -', {
+    it('path::4::should truncate to `omission` when it is larger than length', () => {
+      const result = truncate('32-chars-string-----------------', {
+        omission: 'a-omission-string-larger-than-the-length'
+      })
+
+      assert.strictEqual(result, 'a-omission-string-larger-than-the-length')
+    })
+
+    it('path::5::should not use `separator` if it is already at the end', () => {
+      const result = truncate('32-chars-string------------|----', {
+        separator: '|'
+      })
+
+      assert.strictEqual(result, '32-chars-string------------...')
+    })
+
+    it('path::6::should not use `separator` at the end with unicode chars', () => {
+      const result = truncate('32-chars-string-with-\ud800-----|----', {
+        separator: '|'
+      })
+
+      assert.strictEqual(result, '32-chars-string-with-\ud800-----...')
+    })
+
+    it('path::7::should not use `separator` when it is the truncated part', () => {
+      const result = truncate('32-chars-string---------------|-', {
+        separator: '|'
+      })
+
+      assert.strictEqual(result, '32-chars-string------------...')
+    })
+
+    it('path::8::should use last `separator` occurrence to slice string before length', () => {
+      const result = truncate('32-chars-string   --------------', {
         separator: ' '
       })
 
+      assert.strictEqual(result, '32-chars-string  ...')
+    })
+
+    it('path::9::should ignore `separator` if is a regex without matches', () => {
+      const result = truncate('32-chars-string-----------------', {
+        separator: /no-match-pattern/
+      })
+
       assert.strictEqual(result, '32-chars-string------------...')
     })
 
-    it('path::11::should use a `separator` regex to slice string', () => {
-      const result = truncate('32-chars-string------------,  -', {
+    it('path::10::should use not use `separator` regex to slice string', () => {
+      const result = truncate('32-chars-strin\u1dc0g\u1dc0--------------, -', {
         separator: /,? +/
       })
 
-      assert.strictEqual(result, '32-chars-string------------...')
+      assert.strictEqual(result, '32-chars-strin\u1dc0g\u1dc0------------...')
+    })
+
+    it('path::11::should use a `separator` regex to slice string', () => {
+      const result = truncate('32-chars-string-----,  ---------', {
+        separator: /,? +/
+      })
+
+      assert.strictEqual(result, '32-chars-string-----...')
     })
 
     it('path::12::should use a `separator` global match regex to slice string', () => {
-      const result = truncate('32-chars-string------------,  -', {
+      const result = truncate('32-chars-string-----,  ---------', {
         separator: /,? +/g
       })
 
-      assert.strictEqual(result, '32-chars-string------------...')
+      assert.strictEqual(result, '32-chars-string-----...')
     })
   })
 
