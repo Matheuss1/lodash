@@ -24,7 +24,6 @@ describe('eq', () => {
     })
   })
 
-
   describe('when type is undefined', () => {
     it('should return true for both undefined', () => {
       assert.strictEqual(eq(undefined, undefined), true)
