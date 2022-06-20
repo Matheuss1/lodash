@@ -6,7 +6,7 @@ describe('truncate', () => {
   const string = 'hi-diddly-ho there, neighborino'
 
   describe('Control-Flow Graph structural tests', () => {
-    it('should return long string truncated with omission', () => {
+    it('should truncate a long string with omission', () => {
       const result = truncate('32-chars-string-----------------')
 
       assert.strictEqual(result, '32-chars-string------------...')
@@ -48,7 +48,7 @@ describe('truncate', () => {
       assert.strictEqual(result, '32-chars-string-with-\ud800-----...')
     })
 
-    it('should not use `separator` when it is the truncated part', () => {
+    it('should not use `separator` when it is in the truncated part', () => {
       const result = truncate('32-chars-string---------------|-', {
         separator: '|'
       })
@@ -72,7 +72,7 @@ describe('truncate', () => {
       assert.strictEqual(result, '32-chars-string------------...')
     })
 
-    it(':should use not use `separator` regex to slice string', () => {
+    it(':should not use `separator` regex at the end to slice string', () => {
       const result = truncate('32-chars-strin\u1dc0g\u1dc0--------------, -', {
         separator: /,? +/
       })
